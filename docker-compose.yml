@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend-pos
+      dockerfile: dockerfile
+    container_name: pos_backend
+    env_file:
+      - ./backend-pos/.env
+    ports:
+      - "6000:6000"
+    volumes:
+      - ./backend-pos:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - postgres-db
+
+  frontend:
+    build:
+      context: ./frontend-pos
+      dockerfile: dockerfile
+    container_name: pos_frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend-pos:/app
+      - /app/node_modules
+
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: pos_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+      POSTGRES_DB: ${DB_DATABASE:-pos_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
