@@ -9,7 +9,7 @@ services:
     env_file:
       - ./backend-pos/.env
     ports:
-      - "6000:6000"
+      - "6001:6001"
     volumes:
       - ./backend-pos:/usr/src/app
       - /usr/src/app/node_modules
@@ -29,14 +29,17 @@ services:
 
   postgres-db:
     image: postgres:15-alpine
-    container_name: pos_postgres
+    container_name: pos-system_db
     restart: always
+    
+    env_file:
+      - ./backend-pos/.env
     environment:
-      POSTGRES_USER: ${DB_USERNAME:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
-      POSTGRES_DB: ${DB_DATABASE:-pos_db}
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: pos-system111
+      POSTGRES_DB: pos-system
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
 
